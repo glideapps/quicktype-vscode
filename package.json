@@ -1,0 +1,52 @@
+{
+    "name": "paste-json-as-code",
+    "displayName": "Paste JSON as Code",
+    "description": "Infer types from JSON that's in the clipboard, and generate and paste those for a variety of programming languages.",
+    "version": "0.0.1",
+    "publisher": "quicktype.io",
+    "author": {
+        "name": "Mark Probst",
+        "email": "mark.probst@gmail.com"
+    },
+    "bugs": {
+        "email": "mark.probst@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/quicktype/quicktype"
+    },
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.pasteJSONAsCode"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.pasteJSONAsCode",
+                "title": "Paste JSON as code"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/copy-paste": "^1.1.30",
+        "typescript": "^2.5.3",
+        "vscode": "^1.1.5"
+    },
+    "dependencies": {
+        "copy-paste": "^1.3.0",
+        "quicktype": "^7.0.1"
+    }
+}
