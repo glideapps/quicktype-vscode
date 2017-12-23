@@ -49,7 +49,7 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
     };
 }
 
-async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
+async function pasteJSONAsTypes(editor: vscode.TextEditor, justTypes: boolean) {
     const language = await getTargetLanguage(editor);
     if (language.cancelled) {
         return;
@@ -99,12 +99,12 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
 
 export function activate(context: vscode.ExtensionContext) {
     const pasteAsCode = vscode.commands.registerTextEditorCommand(
-        "extension.pasteJSONAsCode",
-        editor => pasteJSONAsCode(editor, true)
+        "extension.pasteJSONAsTypes",
+        editor => pasteJSONAsTypes(editor, true)
     );
     const pasteForSerialization = vscode.commands.registerTextEditorCommand(
-        "extension.pasteJSONForSerialization",
-        editor => pasteJSONAsCode(editor, false)
+        "extension.pasteJSONAsTypesAndSerialization",
+        editor => pasteJSONAsTypes(editor, false)
     );
 
     context.subscriptions.push(pasteAsCode, pasteForSerialization);

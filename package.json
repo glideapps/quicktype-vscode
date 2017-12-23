@@ -33,19 +33,19 @@
     ],
     "markdown": "github",
     "activationEvents": [
-        "onCommand:extension.pasteJSONAsCode",
-        "onCommand:extension.pasteJSONForSerialization"
+        "onCommand:extension.pasteJSONAsTypes",
+        "onCommand:extension.pasteJSONAsTypesAndSerialization"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.pasteJSONAsCode",
-                "title": "Paste JSON as code"
+                "command": "extension.pasteJSONAsTypes",
+                "title": "Paste JSON as Types"
             },
             {
-                "command": "extension.pasteJSONForSerialization",
-                "title": "Paste JSON for serialization"
+                "command": "extension.pasteJSONAsTypesAndSerialization",
+                "title": "Paste JSON as Code"
             }
         ]
     },
