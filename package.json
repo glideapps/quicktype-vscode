@@ -1,21 +1,20 @@
 {
     "name": "quicktype",
+    "displayName": "Paste JSON as Code",
+    "description": "Copy JSON, paste as Go, TypeScript, C#, C++ and more.",
+    "version": "0.0.4",
+    "publisher": "quicktype",
     "icon": "media/icon.png",
     "galleryBanner": {
-        "color": "#159588",
+        "color": "#00212b",
         "theme": "dark"
     },
     "homepage": "https://quicktype.io",
-    "displayName": "Paste JSON as Code • quicktype",
-    "description": "Infer types from JSON that's in the clipboard, and paste those for a variety of programming languages.",
-    "version": "0.0.4",
-    "publisher": "quicktype",
     "author": {
         "name": "quicktype.io",
         "email": "hello@quicktype.io"
     },
     "bugs": {
-        "email": "hello@quicktype.io",
         "url": "https://github.com/quicktype/quicktype/issues"
     },
     "repository": {
@@ -26,7 +25,6 @@
         "vscode": "^1.18.0"
     },
     "categories": [
-        "Languages",
         "Other"
     ],
     "keywords": [

@@ -1,5 +1,3 @@
-# Paste JSON as Code • quicktype
-
 [![Marketplace](https://vsmarketplacebadge.apphb.com/version/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype) [![Installs](https://vsmarketplacebadge.apphb.com/installs/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype) [![Ratings](https://vsmarketplacebadge.apphb.com/rating-short/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype)
 
 **Supports** `C#`, `Go`, `C++`, `Java`, `TypeScript`, `Swift`, `Elm`, and `JSON Schema`.
