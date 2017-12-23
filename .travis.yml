@@ -3,6 +3,8 @@ node_js: node # latest
 install: npm install
 script: npm run compile
 deploy:
+  provider: script
+  script: npm run publish
   skip_cleanup: true
   on:
     branch: master
