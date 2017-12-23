@@ -11,12 +11,26 @@ async function paste(): Promise<string> {
     });
 }
 
+function jsonIsValid(json: string) {
+    try {
+        JSON.parse(json);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
     const documentLanguage = editor.document.languageId;
     const maybeLanguage = languageNamed(documentLanguage);
     const language = maybeLanguage === undefined ? "types" : documentLanguage;
 
     const content = await paste();
+    if (!jsonIsValid(content)) {
+        vscode.window.showErrorMessage("Clipboard does not contain valid JSON.");
+        return;
+    }
+
     const rendererOptions = {};
     if (justTypes) {
         rendererOptions["just-types"] = "true";
@@ -31,6 +45,8 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
             rendererOptions
         });
     } catch (e) {
+        // TODO Invalid JSON produces an uncatchable exception from quicktype
+        // Fix this so we can catch and show an error message.
         vscode.window.showErrorMessage(e);
         return;
     }
