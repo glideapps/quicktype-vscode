@@ -1,7 +1,7 @@
 {
     "name": "paste-json-as-code",
     "displayName": "Paste JSON as Code",
-    "description": "Infer types from JSON that's in the clipboard, and generate and paste those for a variety of programming languages.",
+    "description": "Infer types from JSON that's in the clipboard, and paste those for a variety of programming languages.",
     "version": "0.0.1",
     "publisher": "quicktype.io",
     "author": {
