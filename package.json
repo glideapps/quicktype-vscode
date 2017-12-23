@@ -1,15 +1,22 @@
 {
-    "name": "paste-json-as-code",
-    "displayName": "Paste JSON as Code",
+    "name": "quicktype",
+    "icon": "icon.png",
+    "galleryBanner": {
+        "color": "#159588",
+        "theme": "dark"
+    },
+    "homepage": "https://quicktype.io",
+    "displayName": "Paste JSON as Code • quicktype",
     "description": "Infer types from JSON that's in the clipboard, and paste those for a variety of programming languages.",
     "version": "0.0.1",
-    "publisher": "quicktype.io",
+    "publisher": "quicktype",
     "author": {
-        "name": "Mark Probst",
-        "email": "mark.probst@gmail.com"
+        "name": "quicktype.io",
+        "email": "hello@quicktype.io"
     },
     "bugs": {
-        "email": "mark.probst@gmail.com"
+        "email": "hello@quicktype.io",
+        "url": "https://github.com/quicktype/quicktype/issues"
     },
     "repository": {
         "type": "git",
@@ -19,8 +26,13 @@
         "vscode": "^1.18.0"
     },
     "categories": [
+        "Languages",
         "Other"
     ],
+    "keywords": [
+        "json", "converter"
+    ],
+    "markdown": "github",
     "activationEvents": [
         "onCommand:extension.pasteJSONAsCode",
         "onCommand:extension.pasteJSONForSerialization"
