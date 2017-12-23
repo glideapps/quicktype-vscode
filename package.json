@@ -22,7 +22,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.pasteJSONAsCode"
+        "onCommand:extension.pasteJSONAsCode",
+        "onCommand:extension.pasteJSONForSerialization"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -30,6 +31,10 @@
             {
                 "command": "extension.pasteJSONAsCode",
                 "title": "Paste JSON as code"
+            },
+            {
+                "command": "extension.pasteJSONForSerialization",
+                "title": "Paste JSON for serialization"
             }
         ]
     },

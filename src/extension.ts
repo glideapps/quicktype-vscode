@@ -5,37 +5,46 @@ import { Range } from "vscode";
 import { paste } from "copy-paste";
 import { quicktype, languageNamed } from "quicktype";
 
-function pasteJSONAsCode(editor: vscode.TextEditor): void {
+function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean): void {
     const documentLanguage = editor.document.languageId;
     const maybeLanguage = languageNamed(documentLanguage);
     const language = maybeLanguage === undefined ? "types" : documentLanguage;
     paste((err, content) => {
         if (err) return;
+        const rendererOptions = {};
+        if (justTypes) {
+            rendererOptions["just-types"] = "true";
+            rendererOptions["features"] = "just-types";
+        }
         quicktype({
             lang: language,
             sources: [{name: "TopLevel", samples: [content]}],
-            rendererOptions: {"just-types": "true", "features": "just-types"}
+            rendererOptions
         }).then(result => {
             const text = result.lines.join("\n");
+            const selection = editor.selection;
             editor.edit(builder => {
-                const selection = editor.selection;
                 if (selection.isEmpty) {
                     builder.insert(selection.start, text);
                 } else {
                     builder.replace(new Range(selection.start, selection.end), text);
-                }
+                }    
             });
         });
     });
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    const pasteCommandRegistration = vscode.commands.registerTextEditorCommand(
+    const pasteAsCode = vscode.commands.registerTextEditorCommand(
         "extension.pasteJSONAsCode",
-        pasteJSONAsCode
+        editor => pasteJSONAsCode(editor, true)
+    );
+    const pasteForSerialization = vscode.commands.registerTextEditorCommand(
+        "extension.pasteJSONForSerialization",
+        editor => pasteJSONAsCode(editor, false)
     );
 
-    context.subscriptions.push(pasteCommandRegistration);
+    context.subscriptions.push(pasteAsCode, pasteForSerialization);
 }
 
 export function deactivate(): void {
