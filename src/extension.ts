@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
-import { quicktype, languageNamed } from "quicktype";
+import { quicktype, languageNamed, SerializedRenderResult } from "quicktype";
 
 async function paste(): Promise<string> {
     return new Promise<string>((pass, fail) => {
@@ -23,11 +23,17 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
         rendererOptions["features"] = "just-types";
     }
 
-    const result = await quicktype({
-        lang: language,
-        sources: [{name: "TopLevel", samples: [content]}],
-        rendererOptions
-    });
+    let result: SerializedRenderResult;
+    try {
+        result = await quicktype({
+            lang: language,
+            sources: [{name: "TopLevel", samples: [content]}],
+            rendererOptions
+        });
+    } catch (e) {
+        vscode.window.showErrorMessage(e);
+        return;
+    }
     
     const text = result.lines.join("\n");
     const selection = editor.selection;
