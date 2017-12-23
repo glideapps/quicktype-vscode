@@ -37,11 +37,15 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
         rendererOptions["features"] = "just-types";
     }
 
+    const topLevelName = await vscode.window.showInputBox({
+        prompt: "What is the top-level type name for this JSON?"
+    }) || "TopLevel";
+
     let result: SerializedRenderResult;
     try {
         result = await quicktype({
             lang: language,
-            sources: [{name: "TopLevel", samples: [content]}],
+            sources: [{name: topLevelName, samples: [content]}],
             rendererOptions
         });
     } catch (e) {
