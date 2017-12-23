@@ -20,6 +20,17 @@ function jsonIsValid(json: string) {
     return true;
 }
 
+async function promptTopLevelName(): Promise<{ cancelled: boolean, name: string }> {
+    let topLevelName = await vscode.window.showInputBox({
+        prompt: "What is the top-level type name for this JSON?"
+    });
+
+    return {
+        cancelled: topLevelName === undefined,
+        name: topLevelName || "TopLevel"
+    };
+}
+
 async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
     const documentLanguage = editor.document.languageId;
     const maybeLanguage = languageNamed(documentLanguage);
@@ -37,15 +48,16 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
         rendererOptions["features"] = "just-types";
     }
 
-    const topLevelName = await vscode.window.showInputBox({
-        prompt: "What is the top-level type name for this JSON?"
-    }) || "TopLevel";
+    const topLevelName = await promptTopLevelName();
+    if (topLevelName.cancelled) {
+        return;
+    }
 
     let result: SerializedRenderResult;
     try {
         result = await quicktype({
             lang: language,
-            sources: [{name: topLevelName, samples: [content]}],
+            sources: [{name: topLevelName.name, samples: [content]}],
             rendererOptions
         });
     } catch (e) {
