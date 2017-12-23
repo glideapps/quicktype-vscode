@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
-import { quicktype, languageNamed, SerializedRenderResult } from "quicktype";
+import { quicktype, languages, languageNamed, SerializedRenderResult } from "quicktype";
 
 async function paste(): Promise<string> {
     return new Promise<string>((pass, fail) => {
@@ -31,10 +31,29 @@ async function promptTopLevelName(): Promise<{ cancelled: boolean, name: string 
     };
 }
 
-async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
+async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled: boolean, name: string }>
+{
     const documentLanguage = editor.document.languageId;
-    const maybeLanguage = languageNamed(documentLanguage);
-    const language = maybeLanguage === undefined ? "types" : documentLanguage;
+    const currentLanguage = languageNamed(documentLanguage);
+    if (currentLanguage !== undefined) {
+        return {
+            cancelled: false,
+            name: documentLanguage
+        };
+    }
+    
+    const chosenName = await vscode.window.showQuickPick(languages.map(l => l.displayName));
+    return {
+        cancelled: chosenName === undefined,
+        name: chosenName || "types"
+    };
+}
+
+async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
+    const language = await getTargetLanguage(editor);
+    if (language.cancelled) {
+        return;
+    }
 
     const content = await paste();
     if (!jsonIsValid(content)) {
@@ -56,7 +75,7 @@ async function pasteJSONAsCode(editor: vscode.TextEditor, justTypes: boolean) {
     let result: SerializedRenderResult;
     try {
         result = await quicktype({
-            lang: language,
+            lang: language.name,
             sources: [{name: topLevelName.name, samples: [content]}],
             rendererOptions
         });
