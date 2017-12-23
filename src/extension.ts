@@ -22,7 +22,7 @@ function jsonIsValid(json: string) {
 
 async function promptTopLevelName(): Promise<{ cancelled: boolean, name: string }> {
     let topLevelName = await vscode.window.showInputBox({
-        prompt: "What is the top-level type name for this JSON?"
+        prompt: "Top-level type name?"
     });
 
     return {
