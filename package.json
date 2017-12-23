@@ -1,6 +1,6 @@
 {
     "name": "quicktype",
-    "icon": "icon.png",
+    "icon": "icon@2x.png",
     "galleryBanner": {
         "color": "#159588",
         "theme": "dark"
@@ -8,7 +8,7 @@
     "homepage": "https://quicktype.io",
     "displayName": "Paste JSON as Code • quicktype",
     "description": "Infer types from JSON that's in the clipboard, and paste those for a variety of programming languages.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "quicktype",
     "author": {
         "name": "quicktype.io",
@@ -30,7 +30,8 @@
         "Other"
     ],
     "keywords": [
-        "json", "converter"
+        "json",
+        "converter"
     ],
     "markdown": "github",
     "activationEvents": [
@@ -51,6 +52,7 @@
         ]
     },
     "scripts": {
+        "publish": "vsce publish patch -p $VSCE_TOKEN",
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
@@ -61,6 +63,7 @@
         "@types/copy-paste": "^1.1.30",
         "@types/node": "^8.5.2",
         "typescript": "^2.5.3",
+        "vsce": "^1.35.0",
         "vscode": "^1.1.5"
     },
     "dependencies": {

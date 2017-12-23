@@ -1,0 +1,13 @@
+language: node_js
+node_js: node # latest
+install: npm install
+script: npm run compile
+deploy:
+  skip_cleanup: true
+  on:
+    branch: master
+notifications:
+  email:
+    on_success: never # default: change
+  slack:
+    secure: "XRAIego99I4ZbEgPo+NREnrcMGxhJZ5pCKcfwehGrtpyQ0hNKa/F1RKp9BH8F1k7awaXs4MWG9fRsJVm8kaEMp29E9gj81CX4d1Z6Pej3QIjSWJc2+ZYcJDaxe+t9AZEAmmviZqUWn9WkJZvkVtnykdfo19wb1SEScZXm8qHZhefmTfpv7caBSq1Y73tlTsRVnDELqmK0hodBPVnbVLeIseaR0bqqD+bIZsA+YE/vqr9GPrzYqgcJ2vMTr9YrlRzo9Om8WoD0DNOiFWWortJFQ8unoTszjCKzXXOVf6l9CJL7uqe6WY7yRIaMu+x1uRSMBpaoek1ehL3kyn1E5vG3alK6JbCfSFrhiSpJxYSNmK6s9dJrt0teydlil2UsbcHOVOy8B8mWc9L548OEUI6KoRY3mQWaZQYy27hkT1U1F46OA9jvzpSofGLLaXX4sAofO+zuhypzIyvV4qK+Gk0r+ZWYEMh2JcdJ+4JbVw6S9ssdu+88v/29BV8NI3OrS8ci4MHtI0wOoEO799BQU4dXt8pUNem1oZ9SroAjbx4ZR0DClnhhlhBB+2+TjdXtSTBfDVuxs3quzaMXHN8rAZmZYvXPycTDHZUIcB7aDqN2lBp03fuJRSkL/qmQxUn+eXTLOVIecHW+hiimZwpPkFfO+7Nc7lGRO8bo90fY3rtk1Q="
