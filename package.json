@@ -33,23 +33,23 @@
     ],
     "markdown": "github",
     "activationEvents": [
-        "onCommand:extension.pasteJSONAsTypes",
-        "onCommand:extension.pasteJSONAsTypesAndSerialization"
+        "onCommand:quicktype.pasteJSONAsTypes",
+        "onCommand:quicktype.pasteJSONAsTypesAndSerialization"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [{
-                "command": "extension.pasteJSONAsTypes",
+                "command": "quicktype.pasteJSONAsTypes",
                 "title": "Paste JSON as Types"
             },
             {
-                "command": "extension.pasteJSONAsTypesAndSerialization",
+                "command": "quicktype.pasteJSONAsTypesAndSerialization",
                 "title": "Paste JSON as Code"
             }
         ],
         "keybindings": [
             {
-                "command": "extension.pasteJSONAsTypesAndSerialization",
+                "command": "quicktype.pasteJSONAsTypesAndSerialization",
                 "key": "ctrl+shift+V",
                 "mac": "cmd+shift+V",
                 "when": "editorTextFocus"

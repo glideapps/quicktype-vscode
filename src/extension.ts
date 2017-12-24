@@ -97,13 +97,18 @@ async function pasteJSONAsTypes(editor: vscode.TextEditor, justTypes: boolean) {
     });
 }
 
+enum Command {
+    PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
+    PasteJSONAsTypesAndSerialization = "quicktype.pasteJSONAsTypesAndSerialization"
+}
+
 export function activate(context: vscode.ExtensionContext) {
     const pasteAsCode = vscode.commands.registerTextEditorCommand(
-        "extension.pasteJSONAsTypes",
+        Command.PasteJSONAsTypes,
         editor => pasteJSONAsTypes(editor, true)
     );
     const pasteForSerialization = vscode.commands.registerTextEditorCommand(
-        "extension.pasteJSONAsTypesAndSerialization",
+        Command.PasteJSONAsTypesAndSerialization,
         editor => pasteJSONAsTypes(editor, false)
     );
 
