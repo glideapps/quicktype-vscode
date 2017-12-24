@@ -5,6 +5,13 @@ import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
 import { quicktype, languages, languageNamed, SerializedRenderResult } from "quicktype";
 
+enum Command {
+    PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
+    PasteJSONAsTypesAndSerialization = "quicktype.pasteJSONAsTypesAndSerialization",
+    PasteSchemaAsTypes = "quicktype.pasteJSONSchemaAsTypes",
+    PasteSchemaAsTypesAndSerialization = "quicktype.pasteJSONSchemaAsTypesAndSerialization"
+}
+
 async function paste(): Promise<string> {
     return new Promise<string>((pass, fail) => {
         pasteCallback((err, content) => err ? fail(err) : pass(content));
@@ -49,7 +56,7 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
     };
 }
 
-async function pasteJSONAsTypes(editor: vscode.TextEditor, justTypes: boolean) {
+async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", justTypes: boolean) {
     const language = await getTargetLanguage(editor);
     if (language.cancelled) {
         return;
@@ -72,11 +79,15 @@ async function pasteJSONAsTypes(editor: vscode.TextEditor, justTypes: boolean) {
         return;
     }
 
+    let source = kind === "json"
+        ? { name: topLevelName.name, samples: [content] }
+        : { name: topLevelName.name, schema: content };
+
     let result: SerializedRenderResult;
     try {
         result = await quicktype({
             lang: language.name,
-            sources: [{name: topLevelName.name, samples: [content]}],
+            sources: [source],
             rendererOptions
         });
     } catch (e) {
@@ -97,22 +108,25 @@ async function pasteJSONAsTypes(editor: vscode.TextEditor, justTypes: boolean) {
     });
 }
 
-enum Command {
-    PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
-    PasteJSONAsTypesAndSerialization = "quicktype.pasteJSONAsTypesAndSerialization"
-}
-
 export function activate(context: vscode.ExtensionContext) {
-    const pasteAsCode = vscode.commands.registerTextEditorCommand(
-        Command.PasteJSONAsTypes,
-        editor => pasteJSONAsTypes(editor, true)
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand(
+            Command.PasteJSONAsTypes,
+            editor => pasteAsTypes(editor, "json", true)
+        ),
+        vscode.commands.registerTextEditorCommand(
+            Command.PasteJSONAsTypesAndSerialization,
+            editor => pasteAsTypes(editor, "json", false)
+        ),
+        vscode.commands.registerTextEditorCommand(
+            Command.PasteSchemaAsTypes,
+            editor => pasteAsTypes(editor, "schema", true)
+        ),
+        vscode.commands.registerTextEditorCommand(
+            Command.PasteSchemaAsTypesAndSerialization,
+            editor => pasteAsTypes(editor, "schema", false)
+        )
     );
-    const pasteForSerialization = vscode.commands.registerTextEditorCommand(
-        Command.PasteJSONAsTypesAndSerialization,
-        editor => pasteJSONAsTypes(editor, false)
-    );
-
-    context.subscriptions.push(pasteAsCode, pasteForSerialization);
 }
 
 export function deactivate(): void {

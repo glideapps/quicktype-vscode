@@ -34,7 +34,9 @@
     "markdown": "github",
     "activationEvents": [
         "onCommand:quicktype.pasteJSONAsTypes",
-        "onCommand:quicktype.pasteJSONAsTypesAndSerialization"
+        "onCommand:quicktype.pasteJSONAsTypesAndSerialization",
+        "onCommand:quicktype.pasteJSONSchemaAsTypes",
+        "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -45,6 +47,14 @@
             {
                 "command": "quicktype.pasteJSONAsTypesAndSerialization",
                 "title": "Paste JSON as Code"
+            },
+            {
+                "command": "quicktype.pasteJSONSchemaAsTypes",
+                "title": "Paste JSON Schema as Types"
+            },
+            {
+                "command": "quicktype.pasteJSONSchemaAsTypesAndSerialization",
+                "title": "Paste JSON Schema as Code"
             }
         ],
         "keybindings": [
