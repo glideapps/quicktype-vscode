@@ -63,6 +63,12 @@
                 "key": "ctrl+shift+V",
                 "mac": "cmd+shift+V",
                 "when": "editorTextFocus"
+            },
+            {
+                "command": "quicktype.pasteJSONAsTypes",
+                "key": "ctrl+shift+alt+V",
+                "mac": "cmd+shift+alt+V",
+                "when": "editorTextFocus"
             }
         ]
     },
