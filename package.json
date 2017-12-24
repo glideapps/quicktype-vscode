@@ -46,6 +46,14 @@
                 "command": "extension.pasteJSONAsTypesAndSerialization",
                 "title": "Paste JSON as Code"
             }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.pasteJSONAsTypesAndSerialization",
+                "key": "ctrl+shift+V",
+                "mac": "cmd+shift+V",
+                "when": "editorTextFocus"
+            }
         ]
     },
     "scripts": {
