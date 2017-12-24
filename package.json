@@ -38,8 +38,7 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.pasteJSONAsTypes",
                 "title": "Paste JSON as Types"
             },
