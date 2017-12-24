@@ -28,7 +28,7 @@ Let's generate some Go code to parse this Pokémon JSON:
 
 1. Copy this sample JSON.
 1. Create a new `.go` file.
-1. Invoke the `Copy JSON as Code` command via the Command Palette.
+1. Invoke the `Paste JSON as Code` command (or `Paste JSON as Types` if you only want types).
 1. Type a name for this type–`Pokemon` will do.
 
 `quicktype` will generate the following code:
