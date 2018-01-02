@@ -12,7 +12,7 @@ function exec(command: string) {
   return (result.stdout as string).trim();
 }
 
-const PUBLISHED = exec(`npm show quicktype version`);
+const PUBLISHED = exec(`npm -j ls quicktype | jq -r .dependencies.quicktype.version`);
 const CURRENT = require(`../package.json`).version;
 
 switch (compareVersions(CURRENT, PUBLISHED)) {
