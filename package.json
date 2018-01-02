@@ -40,7 +40,8 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "quicktype.pasteJSONAsTypes",
                 "title": "Paste JSON as Types"
             },
@@ -73,8 +74,7 @@
         ]
     },
     "scripts": {
-        "patch-version": "ts-node script/patch-npm-version.ts",
-        "publish": "npm run patch-version && vsce publish -p $VSCE_TOKEN",
+        "publish": "vsce publish -p $VSCE_TOKEN",
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
@@ -84,15 +84,12 @@
     "devDependencies": {
         "@types/copy-paste": "^1.1.30",
         "@types/node": "^8.5.2",
-        "compare-versions": "^3.1.0",
-        "shelljs": "^0.7.8",
-        "ts-node": "^4.1.0",
         "typescript": "^2.5.3",
         "vsce": "^1.35.0",
         "vscode": "^1.1.5"
     },
     "dependencies": {
         "copy-paste": "^1.3.0",
-        "quicktype": "^7.0.5"
+        "quicktype": "^8.0.0"
     }
 }
