@@ -12,12 +12,7 @@ function exec(command: string) {
   return (result.stdout as string).trim();
 }
 
-const PUBLISHED = (() => {
-  const json = exec(`vsce show quicktype.quicktype --json`);
-  const version = JSON.parse(json).versions[0].version;
-  return version;
-})();
-
+const PUBLISHED = exec(`npm show quicktype version`);
 const CURRENT = require(`../package.json`).version;
 
 switch (compareVersions(CURRENT, PUBLISHED)) {
