@@ -11,7 +11,7 @@ source appcenter/slack.sh
 npm update quicktype
 
 # Sync extension version with quicktype
-PUBLISHED = `npm -j ls quicktype | jq -r .dependencies.quicktype.version`
-npm version $PUBLISHED --force --no-git-tag-version
+vquicktype=`npm -j ls quicktype | jq -r .dependencies.quicktype.version`
+npm version $vquicktype --force --no-git-tag-version
 
 npm run compile
