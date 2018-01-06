@@ -5,18 +5,7 @@ import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
 import { quicktype, languages, languageNamed, SerializedRenderResult } from "quicktype";
 
-import * as ua from "universal-analytics";
-import { v4 as generateUUID } from "uuid";
-
-const ANALYTICS_ID = "UA-102732788-4";
-
-let visitor: ua.Visitor;
-
-function getVisitor(context: vscode.ExtensionContext): ua.Visitor {
-    const uuid = context.globalState.get("uuid", generateUUID());
-    context.globalState.update("uuid", uuid);
-    return ua(ANALYTICS_ID, uuid);
-}
+import * as analytics from "./analytics";
 
 enum Command {
     PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
@@ -96,7 +85,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
         ? { name: topLevelName.name, samples: [content] }
         : { name: topLevelName.name, schema: content };
 
-    visitor.event("extension", "paste", ).send();
+    analytics.sendEvent("paste", language.name);
 
     let result: SerializedRenderResult;
     try {
@@ -125,8 +114,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    visitor = getVisitor(context);
-    visitor.pageview("/").send();
+    analytics.initialize(context);
 
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand(
