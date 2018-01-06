@@ -9,6 +9,9 @@ if [ "$AGENT_JOBSTATUS" != "Succeeded" ]; then
 fi
 
 if [ "$APPCENTER_BRANCH" == "master" ]; then
-    npm run publish
-    slack_notify_deployed
+    if npm run publish; then
+        slack_notify_deployed
+    else
+        exit 1
+    fi
 fi
