@@ -85,7 +85,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
         ? { name: topLevelName.name, samples: [content] }
         : { name: topLevelName.name, schema: content };
 
-    analytics.sendEvent("paste", language.name);
+    analytics.sendEvent(`paste ${kind}`, language.name);
 
     let result: SerializedRenderResult;
     try {
