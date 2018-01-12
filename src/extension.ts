@@ -50,7 +50,8 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
         };
     }
 
-    const chosenName = await vscode.window.showQuickPick(languages.map(l => l.displayName));
+    const languageChoices = languages.map(l => l.displayName).sort();
+    const chosenName = await vscode.window.showQuickPick(languageChoices);
     return {
         cancelled: chosenName === undefined,
         name: chosenName || "types"
