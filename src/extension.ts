@@ -47,7 +47,7 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
     if (currentLanguage !== undefined) {
         return {
             cancelled: false,
-            name: documentLanguage
+            name: currentLanguage.displayName
         };
     }
     
