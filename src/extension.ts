@@ -16,7 +16,7 @@ enum Command {
 
 async function paste(): Promise<string> {
     return new Promise<string>((pass, fail) => {
-        pasteCallback((err, content) => err ? fail(err) : pass(content));
+        pasteCallback((err, content) => (err ? fail(err) : pass(content)));
     });
 }
 
@@ -29,7 +29,7 @@ function jsonIsValid(json: string) {
     return true;
 }
 
-async function promptTopLevelName(): Promise<{ cancelled: boolean, name: string }> {
+async function promptTopLevelName(): Promise<{ cancelled: boolean; name: string }> {
     let topLevelName = await vscode.window.showInputBox({
         prompt: "Top-level type name?"
     });
@@ -40,8 +40,7 @@ async function promptTopLevelName(): Promise<{ cancelled: boolean, name: string 
     };
 }
 
-async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled: boolean, name: string }>
-{
+async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled: boolean; name: string }> {
     const documentLanguage = editor.document.languageId;
     const currentLanguage = languageNamed(documentLanguage);
     if (currentLanguage !== undefined) {
@@ -50,7 +49,7 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
             name: currentLanguage.displayName
         };
     }
-    
+
     const chosenName = await vscode.window.showQuickPick(languages.map(l => l.displayName));
     return {
         cancelled: chosenName === undefined,
@@ -81,9 +80,10 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
         return;
     }
 
-    let source = kind === "json"
-        ? { name: topLevelName.name, samples: [content] }
-        : { name: topLevelName.name, schema: content };
+    let source =
+        kind === "json"
+            ? { name: topLevelName.name, samples: [content] }
+            : { name: topLevelName.name, schema: content };
 
     analytics.sendEvent(`paste ${kind}`, language.name);
 
@@ -101,7 +101,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
         vscode.window.showErrorMessage(e);
         return;
     }
-    
+
     const text = result.lines.join("\n");
     const selection = editor.selection;
     editor.edit(builder => {
@@ -109,7 +109,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
             builder.insert(selection.start, text);
         } else {
             builder.replace(new Range(selection.start, selection.end), text);
-        }    
+        }
     });
 }
 
@@ -117,21 +117,17 @@ export function activate(context: vscode.ExtensionContext) {
     analytics.initialize(context);
 
     context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand(
-            Command.PasteJSONAsTypes,
-            editor => pasteAsTypes(editor, "json", true)
+        vscode.commands.registerTextEditorCommand(Command.PasteJSONAsTypes, editor =>
+            pasteAsTypes(editor, "json", true)
         ),
-        vscode.commands.registerTextEditorCommand(
-            Command.PasteJSONAsTypesAndSerialization,
-            editor => pasteAsTypes(editor, "json", false)
+        vscode.commands.registerTextEditorCommand(Command.PasteJSONAsTypesAndSerialization, editor =>
+            pasteAsTypes(editor, "json", false)
         ),
-        vscode.commands.registerTextEditorCommand(
-            Command.PasteSchemaAsTypes,
-            editor => pasteAsTypes(editor, "schema", true)
+        vscode.commands.registerTextEditorCommand(Command.PasteSchemaAsTypes, editor =>
+            pasteAsTypes(editor, "schema", true)
         ),
-        vscode.commands.registerTextEditorCommand(
-            Command.PasteSchemaAsTypesAndSerialization,
-            editor => pasteAsTypes(editor, "schema", false)
+        vscode.commands.registerTextEditorCommand(Command.PasteSchemaAsTypesAndSerialization, editor =>
+            pasteAsTypes(editor, "schema", false)
         )
     );
 }
