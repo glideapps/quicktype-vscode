@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
-import { quicktype, languages, languageNamed, SerializedRenderResult } from "quicktype";
+import { quicktype, languages, languageNamed, SerializedRenderResult, JSONTypeSource, SchemaTypeSource } from "quicktype";
 
 import * as analytics from "./analytics";
 
@@ -91,8 +91,8 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
 
     let source =
         kind === "json"
-            ? { name: topLevelName.name, samples: [content] }
-            : { name: topLevelName.name, schema: content };
+            ? { kind: "json", name: topLevelName.name, samples: [content] } as JSONTypeSource
+            : { kind: "schema", name: topLevelName.name, schema: content } as SchemaTypeSource;
 
     analytics.sendEvent(`paste ${kind}`, language.name);
 
