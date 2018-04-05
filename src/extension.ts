@@ -3,7 +3,16 @@
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
-import { quicktype, languages, languageNamed, SerializedRenderResult, JSONTypeSource, SchemaTypeSource, TypeSource, TypeScriptTypeSource } from "quicktype";
+import {
+    quicktype,
+    languages,
+    languageNamed,
+    SerializedRenderResult,
+    JSONTypeSource,
+    SchemaTypeSource,
+    TypeSource,
+    TypeScriptTypeSource
+} from "quicktype";
 
 import * as analytics from "./analytics";
 

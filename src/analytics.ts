@@ -10,7 +10,7 @@ let visitor: ua.Visitor;
 export function initialize(context: ExtensionContext) {
     const uuid = context.globalState.get("uuid", generateUUID());
     context.globalState.update("uuid", uuid);
-    
+
     visitor = ua(ANALYTICS_ID, uuid);
     visitor.pageview("/").send();
 }
