@@ -14,4 +14,4 @@ npm update quicktype
 vquicktype=`npm -j ls quicktype | jq -r .dependencies.quicktype.version`
 npm version $vquicktype --force --no-git-tag-version
 
-npm run build
+npm run compile
