@@ -36,7 +36,8 @@
         "onCommand:quicktype.pasteJSONAsTypes",
         "onCommand:quicktype.pasteJSONAsTypesAndSerialization",
         "onCommand:quicktype.pasteJSONSchemaAsTypes",
-        "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization"
+        "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization",
+        "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -56,6 +57,10 @@
             {
                 "command": "quicktype.pasteJSONSchemaAsTypesAndSerialization",
                 "title": "Paste JSON Schema as Code"
+            },
+            {
+                "command": "quicktype.pasteTypeScriptAsTypesAndSerialization",
+                "title": "Paste TypeScript as Code"
             }
         ],
         "keybindings": [

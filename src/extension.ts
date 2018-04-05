@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { paste as pasteCallback } from "copy-paste";
-import { quicktype, languages, languageNamed, SerializedRenderResult, JSONTypeSource, SchemaTypeSource } from "quicktype";
+import { quicktype, languages, languageNamed, SerializedRenderResult, JSONTypeSource, SchemaTypeSource, TypeSource, TypeScriptTypeSource } from "quicktype";
 
 import * as analytics from "./analytics";
 
@@ -11,7 +11,8 @@ enum Command {
     PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
     PasteJSONAsTypesAndSerialization = "quicktype.pasteJSONAsTypesAndSerialization",
     PasteSchemaAsTypes = "quicktype.pasteJSONSchemaAsTypes",
-    PasteSchemaAsTypesAndSerialization = "quicktype.pasteJSONSchemaAsTypesAndSerialization"
+    PasteSchemaAsTypesAndSerialization = "quicktype.pasteJSONSchemaAsTypesAndSerialization",
+    PasteTypeScriptAsTypesAndSerialization = "quicktype.pasteTypeScriptAsTypesAndSerialization"
 }
 
 async function paste(): Promise<string> {
@@ -58,7 +59,7 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<{ cancelled
     };
 }
 
-async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", justTypes: boolean) {
+async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema" | "typescript", justTypes: boolean) {
     let indentation: string;
     if (editor.options.insertSpaces) {
         const tabSize = editor.options.tabSize as number;
@@ -73,7 +74,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
     }
 
     const content = await paste();
-    if (!jsonIsValid(content)) {
+    if (kind !== "typescript" && !jsonIsValid(content)) {
         vscode.window.showErrorMessage("Clipboard does not contain valid JSON.");
         return;
     }
@@ -89,10 +90,31 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema", 
         return;
     }
 
-    let source =
-        kind === "json"
-            ? { kind: "json", name: topLevelName.name, samples: [content] } as JSONTypeSource
-            : { kind: "schema", name: topLevelName.name, schema: content } as SchemaTypeSource;
+    let source = {
+        json: {
+            kind: "json",
+            name: topLevelName.name,
+            samples: [content]
+        } as JSONTypeSource,
+
+        schema: {
+            kind: "schema",
+            name: topLevelName.name,
+            schema: content
+        } as SchemaTypeSource,
+
+        typescript: {
+            kind: "typescript",
+            sources: {
+                [`${topLevelName.name}.ts`]: content
+            }
+        } as TypeScriptTypeSource
+    }[kind] as TypeSource | undefined;
+
+    if (source === undefined) {
+        vscode.window.showErrorMessage(`Unrecognized input format: ${kind}`);
+        return;
+    }
 
     analytics.sendEvent(`paste ${kind}`, language.name);
 
@@ -138,6 +160,9 @@ export function activate(context: vscode.ExtensionContext) {
         ),
         vscode.commands.registerTextEditorCommand(Command.PasteSchemaAsTypesAndSerialization, editor =>
             pasteAsTypes(editor, "schema", false)
+        ),
+        vscode.commands.registerTextEditorCommand(Command.PasteTypeScriptAsTypesAndSerialization, editor =>
+            pasteAsTypes(editor, "typescript", false)
         )
     );
 }
