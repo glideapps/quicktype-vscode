@@ -8,10 +8,10 @@ source appcenter/slack.sh
 ### Build ###
 #############
 
-npm update quicktype
+npm update quicktype-core
 
 # Sync extension version with quicktype
-vquicktype=`npm -j ls quicktype | jq -r .dependencies.quicktype.version`
-npm version $vquicktype --force --no-git-tag-version
+vext=`npm -j ls quicktype-core | jq -r '.dependencies["quicktype-core"].version | split(".") | map(tonumber) | .[0] |= . + 7 | map(tostring) | join(".")'`
+npm version $vext --force --no-git-tag-version
 
 npm run compile
