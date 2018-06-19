@@ -2,7 +2,7 @@
 
 import * as vscode from "vscode";
 import { Range } from "vscode";
-import { paste as pasteCallback } from "copy-paste";
+import { read as readClipboard } from "clipboardy";
 import {
     quicktype,
     languageNamed,
@@ -23,12 +23,6 @@ enum Command {
     PasteSchemaAsTypes = "quicktype.pasteJSONSchemaAsTypes",
     PasteSchemaAsTypesAndSerialization = "quicktype.pasteJSONSchemaAsTypesAndSerialization",
     PasteTypeScriptAsTypesAndSerialization = "quicktype.pasteTypeScriptAsTypesAndSerialization"
-}
-
-async function paste(): Promise<string> {
-    return new Promise<string>((pass, fail) => {
-        pasteCallback((err, content) => (err ? fail(err) : pass(content)));
-    });
 }
 
 function jsonIsValid(json: string) {
@@ -86,7 +80,13 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: "json" | "schema" |
         return;
     }
 
-    const content = await paste();
+    let content: string;
+    try {
+        content = await readClipboard();
+    } catch (e) {
+        vscode.window.showErrorMessage("Could not get clipboard contents");
+    }
+
     if (kind !== "typescript" && !jsonIsValid(content)) {
         vscode.window.showErrorMessage("Clipboard does not contain valid JSON.");
         return;
