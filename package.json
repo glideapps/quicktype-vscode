@@ -1,105 +1,105 @@
 {
-    "name": "quicktype",
-    "displayName": "Paste JSON as Code",
-    "description": "Copy JSON, paste as Go, TypeScript, C#, C++ and more.",
-    "version": "0.1.0",
-    "publisher": "quicktype",
-    "icon": "media/icon.png",
-    "galleryBanner": {
-        "color": "#00212b",
-        "theme": "dark"
-    },
-    "homepage": "https://quicktype.io",
-    "author": {
-        "name": "quicktype.io",
-        "email": "hello@quicktype.io"
-    },
-    "bugs": {
-        "url": "https://github.com/quicktype/quicktype/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/quicktype/quicktype"
-    },
-    "engines": {
-        "vscode": "^1.22.0"
-    },
-    "categories": [
-        "Other"
+  "name": "quicktype",
+  "displayName": "Paste JSON as Code",
+  "description": "Copy JSON, paste as Go, TypeScript, C#, C++ and more.",
+  "version": "0.1.0",
+  "publisher": "quicktype",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#00212b",
+    "theme": "dark"
+  },
+  "homepage": "https://quicktype.io",
+  "author": {
+    "name": "quicktype.io",
+    "email": "hello@quicktype.io"
+  },
+  "bugs": {
+    "url": "https://github.com/quicktype/quicktype/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quicktype/quicktype"
+  },
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "json",
+    "converter"
+  ],
+  "markdown": "github",
+  "activationEvents": [
+    "onCommand:quicktype.pasteJSONAsTypes",
+    "onCommand:quicktype.pasteJSONAsTypesAndSerialization",
+    "onCommand:quicktype.pasteJSONSchemaAsTypes",
+    "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization",
+    "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "quicktype.pasteJSONAsTypes",
+        "title": "Paste JSON as Types"
+      },
+      {
+        "command": "quicktype.pasteJSONAsTypesAndSerialization",
+        "title": "Paste JSON as Code"
+      },
+      {
+        "command": "quicktype.pasteJSONSchemaAsTypes",
+        "title": "Paste JSON Schema as Types"
+      },
+      {
+        "command": "quicktype.pasteJSONSchemaAsTypesAndSerialization",
+        "title": "Paste JSON Schema as Code"
+      },
+      {
+        "command": "quicktype.pasteTypeScriptAsTypesAndSerialization",
+        "title": "Paste TypeScript as Code"
+      }
     ],
-    "keywords": [
-        "json",
-        "converter"
-    ],
-    "markdown": "github",
-    "activationEvents": [
-        "onCommand:quicktype.pasteJSONAsTypes",
-        "onCommand:quicktype.pasteJSONAsTypesAndSerialization",
-        "onCommand:quicktype.pasteJSONSchemaAsTypes",
-        "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization",
-        "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "quicktype.pasteJSONAsTypes",
-                "title": "Paste JSON as Types"
-            },
-            {
-                "command": "quicktype.pasteJSONAsTypesAndSerialization",
-                "title": "Paste JSON as Code"
-            },
-            {
-                "command": "quicktype.pasteJSONSchemaAsTypes",
-                "title": "Paste JSON Schema as Types"
-            },
-            {
-                "command": "quicktype.pasteJSONSchemaAsTypesAndSerialization",
-                "title": "Paste JSON Schema as Code"
-            },
-            {
-                "command": "quicktype.pasteTypeScriptAsTypesAndSerialization",
-                "title": "Paste TypeScript as Code"
-            }
-        ],
-        "keybindings": [
-            {
-                "command": "quicktype.pasteJSONAsTypesAndSerialization",
-                "key": "ctrl+shift+V",
-                "mac": "cmd+shift+V",
-                "when": "editorTextFocus"
-            },
-            {
-                "command": "quicktype.pasteJSONAsTypes",
-                "key": "ctrl+shift+alt+V",
-                "mac": "cmd+shift+alt+V",
-                "when": "editorTextFocus"
-            }
-        ]
-    },
-    "scripts": {
-        "publish": "vsce publish -p $VSCE_TOKEN",
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "@types/copy-paste": "^1.1.30",
-        "@types/node": "^8.10.20",
-        "@types/universal-analytics": "^0.4.2",
-        "@types/uuid": "^3.4.3",
-        "typescript": "^2.9.2",
-        "vsce": "^1.42.0",
-        "vscode": "^1.1.18"
-    },
-    "dependencies": {
-        "copy-paste": "^1.3.0",
-        "quicktype-core": "^4.0.5",
-        "quicktype-typescript-input": "^0.0.7",
-        "universal-analytics": "^0.4.17",
-        "uuid": "^3.2.1"
-    }
+    "keybindings": [
+      {
+        "command": "quicktype.pasteJSONAsTypesAndSerialization",
+        "key": "ctrl+shift+V",
+        "mac": "cmd+shift+V",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "quicktype.pasteJSONAsTypes",
+        "key": "ctrl+shift+alt+V",
+        "mac": "cmd+shift+alt+V",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "publish": "vsce publish -p $VSCE_TOKEN",
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/clipboardy": "^1.1.0",
+    "@types/node": "^8.10.20",
+    "@types/universal-analytics": "^0.4.2",
+    "@types/uuid": "^3.4.3",
+    "typescript": "^2.9.2",
+    "vsce": "^1.42.0",
+    "vscode": "^1.1.18"
+  },
+  "dependencies": {
+    "clipboardy": "^1.2.3",
+    "quicktype-core": "^4.0.5",
+    "quicktype-typescript-input": "^0.0.7",
+    "universal-analytics": "^0.4.17",
+    "uuid": "^3.2.1"
+  }
 }
