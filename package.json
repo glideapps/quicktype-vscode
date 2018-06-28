@@ -41,8 +41,18 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "commands": [
-      {
+    "configuration": {
+      "type": "object",
+      "title": "quicktype",
+      "properties": {
+        "quicktype.inferMaps": {
+          "type": "boolean",
+          "default": false,
+          "description": "Infer maps when object keys look like map keys."
+        }
+      }
+    },
+    "commands": [{
         "command": "quicktype.pasteJSONAsTypes",
         "title": "Paste JSON as Types"
       },
@@ -63,8 +73,7 @@
         "title": "Paste TypeScript as Code"
       }
     ],
-    "keybindings": [
-      {
+    "keybindings": [{
         "command": "quicktype.pasteJSONAsTypesAndSerialization",
         "key": "ctrl+shift+V",
         "mac": "cmd+shift+V",
