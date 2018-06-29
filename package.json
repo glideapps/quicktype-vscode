@@ -47,7 +47,7 @@
       "properties": {
         "quicktype.inferMaps": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Infer maps when object keys look like map keys."
         }
       }
