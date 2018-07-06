@@ -92,6 +92,10 @@
             {
                 "command": "quicktype.openForJSON",
                 "title": "Open quicktype for JSON"
+            },
+            {
+                "command": "quicktype.changeTargetLanguage",
+                "title": "Change quicktype's target language"
             }
         ],
         "keybindings": [
