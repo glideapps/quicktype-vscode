@@ -93,7 +93,7 @@ async function runQuicktype(
         } else if (lang.name === "kotlin") {
             rendererOptions["framework"] = "just-types";
         } else {
-        rendererOptions["just-types"] = "true";
+            rendererOptions["just-types"] = "true";
         }
     }
 
@@ -316,11 +316,20 @@ async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.Te
         codeProvider.setDocument(document);
     }
 
+    let originalEditor: vscode.TextEditor;
+    if (lastCodeProvider !== undefined) {
+        const doc = lastCodeProvider.document;
+        originalEditor = vscode.window.visibleTextEditors.find(e => e.document === doc);
+    }
+    if (originalEditor === undefined) {
+        originalEditor = vscode.window.activeTextEditor;
+    }
+
     lastCodeProvider = codeProvider;
 
     codeProvider.update();
     const doc = await vscode.workspace.openTextDocument(codeProvider.uri);
-    vscode.window.showTextDocument(doc, vscode.window.activeTextEditor.viewColumn + 1, true);
+    vscode.window.showTextDocument(doc, originalEditor.viewColumn + 1, true);
 }
 
 async function openForJSON(editor: vscode.TextEditor, _languageName: string): Promise<void> {
