@@ -87,8 +87,14 @@ async function runQuicktype(
 ): Promise<SerializedRenderResult> {
     const rendererOptions = {};
     if (justTypes) {
+        // FIXME: The target language should have a property to return these options.
+        if (lang.name === "csharp") {
+            rendererOptions["features"] = "just-types";
+        } else if (lang.name === "kotlin") {
+            rendererOptions["framework"] = "just-types";
+        } else {
         rendererOptions["just-types"] = "true";
-        rendererOptions["features"] = "just-types";
+        }
     }
 
     const inputData = new InputData();
