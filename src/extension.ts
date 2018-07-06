@@ -1,12 +1,13 @@
 "use strict";
 
+import * as fs from "fs";
+
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { read as readClipboard } from "clipboardy";
 import {
     quicktype,
     languageNamed,
-    SerializedRenderResult,
     defaultTargetLanguages,
     JSONSchemaInput,
     InputData,
@@ -16,6 +17,8 @@ import {
 import { schemaForTypeScriptSources } from "quicktype-typescript-input";
 
 import * as analytics from "./analytics";
+
+const spawn = require("threads").spawn;
 
 enum Command {
     PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
@@ -76,6 +79,97 @@ async function getTargetLanguage(editor: vscode.TextEditor): Promise<TargetLangu
 
 type InputKind = "json" | "schema" | "typescript";
 
+type QuicktypeConfiguration = {
+    content: string;
+    kind: InputKind;
+    targetLanguageName: string;
+    topLevelName: string;
+    justTypes: boolean;
+    indentation: string | undefined;
+    leadingComments: string[];
+    inferMaps: boolean;
+    inferEnums: boolean;
+    inferDates: boolean;
+    inferIntegerStrings: boolean;
+};
+
+function spawnQuicktype(cfg: QuicktypeConfiguration): Promise<string> {
+    const thread = spawn(async function(input: QuicktypeConfiguration, done) {
+        fs.writeFileSync("/tmp/quicktype.json", JSON.stringify(input));
+
+        const lang = languageNamed(input.targetLanguageName);
+
+        const rendererOptions = {};
+        if (input.justTypes) {
+            // FIXME: The target language should have a property to return these options.
+            if (lang.name === "csharp") {
+                rendererOptions["features"] = "just-types";
+            } else if (lang.name === "kotlin") {
+                rendererOptions["framework"] = "just-types";
+            } else {
+                rendererOptions["just-types"] = "true";
+            }
+        }
+
+        const topLevelName = input.topLevelName;
+        const content = input.content;
+        const inputData = new InputData();
+        switch (input.kind) {
+            case "json":
+                await inputData.addSource("json", { name: topLevelName, samples: [content] }, () =>
+                    jsonInputForTargetLanguage(lang)
+                );
+                break;
+            case "schema":
+                await inputData.addSource(
+                    "schema",
+                    { name: topLevelName, schema: content },
+                    () => new JSONSchemaInput(undefined)
+                );
+                break;
+            case "typescript":
+                await inputData.addSource(
+                    "schema",
+                    schemaForTypeScriptSources({
+                        [`${topLevelName}.ts`]: content
+                    }),
+                    () => new JSONSchemaInput(undefined)
+                );
+                break;
+            default:
+                vscode.window.showErrorMessage(`Unrecognized input format: ${cfg.kind}`);
+                return;
+        }
+
+        const result = await quicktype({
+            lang: lang,
+            inputData,
+            leadingComments: cfg.leadingComments,
+            rendererOptions,
+            indentation: cfg.indentation,
+            inferMaps: cfg.inferMaps,
+            inferEnums: cfg.inferEnums,
+            inferDates: cfg.inferDates,
+            inferIntegerStrings: cfg.inferIntegerStrings
+        });
+        done(result.lines);
+    });
+
+    return new Promise((resolve, reject) => {
+        thread
+            .send(cfg)
+            .on("message", r => {
+                console.log("message");
+                resolve(r);
+            })
+            .on("error", e => {
+                console.log("error");
+                reject(e);
+            })
+            .on("exit", () => console.log("thread exited"));
+    });
+}
+
 async function runQuicktype(
     content: string,
     kind: InputKind,
@@ -84,54 +178,16 @@ async function runQuicktype(
     justTypes: boolean,
     indentation: string | undefined,
     additionalLeadingComments: string[]
-): Promise<SerializedRenderResult> {
-    const rendererOptions = {};
-    if (justTypes) {
-        // FIXME: The target language should have a property to return these options.
-        if (lang.name === "csharp") {
-            rendererOptions["features"] = "just-types";
-        } else if (lang.name === "kotlin") {
-            rendererOptions["framework"] = "just-types";
-        } else {
-            rendererOptions["just-types"] = "true";
-        }
-    }
-
-    const inputData = new InputData();
-    switch (kind) {
-        case "json":
-            await inputData.addSource("json", { name: topLevelName, samples: [content] }, () =>
-                jsonInputForTargetLanguage(lang)
-            );
-            break;
-        case "schema":
-            await inputData.addSource(
-                "schema",
-                { name: topLevelName, schema: content },
-                () => new JSONSchemaInput(undefined)
-            );
-            break;
-        case "typescript":
-            await inputData.addSource(
-                "schema",
-                schemaForTypeScriptSources({
-                    [`${topLevelName}.ts`]: content
-                }),
-                () => new JSONSchemaInput(undefined)
-            );
-            break;
-        default:
-            vscode.window.showErrorMessage(`Unrecognized input format: ${kind}`);
-            return;
-    }
-
+): Promise<string> {
     const configuration = vscode.workspace.getConfiguration("quicktype");
-    return await quicktype({
-        lang: lang,
-        inputData,
-        leadingComments: ["Generated by https://quicktype.io"].concat(additionalLeadingComments),
-        rendererOptions,
+    return await spawnQuicktype({
+        content,
+        kind,
+        targetLanguageName: lang.name,
+        topLevelName,
+        justTypes,
         indentation,
+        leadingComments: ["Generated by https://quicktype.io"].concat(additionalLeadingComments),
         inferMaps: configuration.inferMaps,
         inferEnums: configuration.inferEnums,
         inferDates: configuration.inferDates,
@@ -178,9 +234,9 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
 
     analytics.sendEvent(`paste ${kind}`, language.lang.name);
 
-    let result: SerializedRenderResult;
+    let text: string;
     try {
-        result = await runQuicktype(content, kind, language.lang, topLevelName, justTypes, indentation, []);
+        text = await runQuicktype(content, kind, language.lang, topLevelName, justTypes, indentation, []);
     } catch (e) {
         // TODO Invalid JSON produces an uncatchable exception from quicktype
         // Fix this so we can catch and show an error message.
@@ -188,7 +244,6 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
         return;
     }
 
-    const text = result.lines.join("\n");
     const selection = editor.selection;
     editor.edit(builder => {
         if (selection.isEmpty) {
@@ -267,7 +322,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
     async update(): Promise<void> {
         this._documentText = this._document.getText();
         try {
-            const result = await runQuicktype(
+            this._targetCode = await runQuicktype(
                 this._documentText,
                 "json",
                 this._targetLanguage,
@@ -276,7 +331,6 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
                 undefined,
                 ["", 'To change the language, run the command "Change quicktype\'s target language"']
             );
-            this._targetCode = result.lines.join("\n");
 
             if (!this._isOpen) return;
 
