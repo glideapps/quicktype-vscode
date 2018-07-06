@@ -195,13 +195,14 @@ export class CodeProvider implements vscode.TextDocumentContentProvider {
     private readonly _changeSubscription: vscode.Disposable;
 
     private _isOpen = false;
+    private _timer: NodeJS.Timer | undefined = undefined;
 
     private _targetCode = "";
 
     constructor() {
         this.uri = vscode.Uri.parse(`${this.scheme}:QuickType.${this.targetLanguage.extension}`);
 
-        this._changeSubscription = vscode.workspace.onDidChangeTextDocument(ev => this.updateIfOpen(ev.document));
+        this._changeSubscription = vscode.workspace.onDidChangeTextDocument(ev => this.textDidChange(ev));
     }
 
     dispose(): void {
@@ -211,6 +212,16 @@ export class CodeProvider implements vscode.TextDocumentContentProvider {
 
     get onDidChange(): vscode.Event<vscode.Uri> {
         return this._onDidChange.event;
+    }
+
+    textDidChange(ev: vscode.TextDocumentChangeEvent): void {
+        if (this._timer) {
+            clearTimeout(this._timer);
+        }
+        this._timer = setTimeout(() => {
+            this._timer = undefined;
+            this.updateIfOpen(ev.document);
+        }, 300);
     }
 
     async updateIfOpen(document: vscode.TextDocument): Promise<void> {
