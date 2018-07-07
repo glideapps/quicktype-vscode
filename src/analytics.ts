@@ -15,6 +15,6 @@ export function initialize(context: ExtensionContext) {
     visitor.pageview("/").send();
 }
 
-export function sendEvent(action: string, label?: string) {
+export function sendEvent(action: string, label: string) {
     visitor.event("extension", action, label).send();
 }
