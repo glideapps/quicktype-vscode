@@ -133,20 +133,20 @@
     },
     "devDependencies": {
         "@types/clipboardy": "^1.1.0",
-        "@types/node": "^8.10.20",
+        "@types/node": "^8.10.21",
         "@types/node-persist": "0.0.33",
         "@types/universal-analytics": "^0.4.2",
         "@types/uuid": "^3.4.3",
         "typescript": "^2.9.2",
-        "vsce": "^1.42.0",
+        "vsce": "^1.43.0",
         "vscode": "^1.1.18"
     },
     "dependencies": {
         "clipboardy": "^1.2.3",
         "node-persist": "^3.0.1",
-        "quicktype-core": "^4.0.5",
+        "quicktype-core": "^4.0.26",
         "quicktype-typescript-input": "^0.0.7",
         "universal-analytics": "^0.4.17",
-        "uuid": "^3.2.1"
+        "uuid": "^3.3.2"
     }
 }
