@@ -48,6 +48,11 @@
             "type": "object",
             "title": "quicktype",
             "properties": {
+                "quicktype.justTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Produce just types, or (de-)serialization code as well?"
+                },
                 "quicktype.inferMaps": {
                     "type": "boolean",
                     "default": true,

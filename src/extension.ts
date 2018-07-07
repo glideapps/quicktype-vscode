@@ -88,10 +88,13 @@ async function runQuicktype(
     kind: InputKind,
     lang: TargetLanguage,
     topLevelName: string,
-    justTypes: boolean,
+    forceJustTypes: boolean,
     indentation: string | undefined,
     additionalLeadingComments: string[]
 ): Promise<SerializedRenderResult> {
+    const configuration = vscode.workspace.getConfiguration(configurationSection);
+    const justTypes = forceJustTypes || configuration.justTypes;
+
     const rendererOptions: RendererOptions = {};
     if (justTypes) {
         // FIXME: The target language should have a property to return these options.
@@ -131,7 +134,6 @@ async function runQuicktype(
             throw new Error(`Unrecognized input format: ${kind}`);
     }
 
-    const configuration = vscode.workspace.getConfiguration("quicktype");
     return await quicktype({
         lang: lang,
         inputData,
@@ -291,7 +293,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
                 this._inputKind,
                 this._targetLanguage,
                 "TopLevel",
-                true,
+                false,
                 undefined,
                 ["", 'To change the language, run the command "Change quicktype\'s target language"']
             );
