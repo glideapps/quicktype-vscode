@@ -22,6 +22,8 @@ import * as persist from "node-persist";
 
 import * as analytics from "./analytics";
 
+const configurationSection = "quicktype";
+
 enum Command {
     PasteJSONAsTypes = "quicktype.pasteJSONAsTypes",
     PasteJSONAsTypesAndSerialization = "quicktype.pasteJSONAsTypesAndSerialization",
@@ -213,15 +215,15 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
     readonly uri: vscode.Uri;
 
     private _documentText: string = "{}";
+    private _targetCode = "";
 
     private readonly _onDidChange = new vscode.EventEmitter<vscode.Uri>();
     private readonly _changeSubscription: vscode.Disposable;
     private readonly _onDidChangeVisibleTextEditors: vscode.Disposable;
+    private readonly _onDidChangeConfiguration: vscode.Disposable;
 
     private _isOpen = false;
     private _timer: NodeJS.Timer | undefined = undefined;
-
-    private _targetCode = "";
 
     constructor(
         private _inputKind: InputKind,
@@ -233,7 +235,10 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 
         this._changeSubscription = vscode.workspace.onDidChangeTextDocument(ev => this.textDidChange(ev));
         this._onDidChangeVisibleTextEditors = vscode.window.onDidChangeVisibleTextEditors(editors =>
-            this.handleDidChangeVisibleTextEditors(editors)
+            this.visibleTextEditorsDidChange(editors)
+        );
+        this._onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(ev =>
+            this.configurationDidChange(ev)
         );
     }
 
@@ -241,6 +246,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         this._onDidChange.dispose();
         this._changeSubscription.dispose();
         this._onDidChangeVisibleTextEditors.dispose();
+        this._onDidChangeConfiguration.dispose();
     }
 
     get inputKind(): InputKind {
@@ -263,7 +269,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         return this._onDidChange.event;
     }
 
-    private handleDidChangeVisibleTextEditors(editors: vscode.TextEditor[]) {
+    private visibleTextEditorsDidChange(editors: vscode.TextEditor[]) {
         const isOpen = editors.some(e => e.document.uri.scheme === this.scheme);
         if (!this._isOpen && isOpen) {
             this.update();
@@ -271,7 +277,13 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         this._isOpen = isOpen;
     }
 
-    textDidChange(ev: vscode.TextDocumentChangeEvent): void {
+    private configurationDidChange(ev: vscode.ConfigurationChangeEvent): void {
+        if (ev.affectsConfiguration(configurationSection)) {
+            this.update();
+        }
+    }
+
+    private textDidChange(ev: vscode.TextDocumentChangeEvent): void {
         if (!this._isOpen) return;
 
         if (ev.document !== this._document) return;
