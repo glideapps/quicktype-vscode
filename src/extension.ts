@@ -1,5 +1,8 @@
 "use strict";
 
+import { homedir } from "os";
+import * as path from "path";
+
 import * as vscode from "vscode";
 import { Range } from "vscode";
 import { read as readClipboard } from "clipboardy";
@@ -11,9 +14,11 @@ import {
     JSONSchemaInput,
     InputData,
     TargetLanguage,
-    jsonInputForTargetLanguage
+    jsonInputForTargetLanguage,
+    RendererOptions
 } from "quicktype-core";
 import { schemaForTypeScriptSources } from "quicktype-typescript-input";
+import * as persist from "node-persist";
 
 import * as analytics from "./analytics";
 
@@ -59,7 +64,7 @@ async function pickTargetLanguage(): Promise<TargetLanguagePick> {
     if (chosenName === undefined) {
         chosenName = "typescript";
     }
-    return { cancelled, lang: languageNamed(chosenName) };
+    return { cancelled, lang: languageNamed(chosenName)! };
 }
 
 async function getTargetLanguage(editor: vscode.TextEditor): Promise<TargetLanguagePick> {
@@ -85,7 +90,7 @@ async function runQuicktype(
     indentation: string | undefined,
     additionalLeadingComments: string[]
 ): Promise<SerializedRenderResult> {
-    const rendererOptions = {};
+    const rendererOptions: RendererOptions = {};
     if (justTypes) {
         // FIXME: The target language should have a property to return these options.
         if (lang.name === "csharp") {
@@ -121,8 +126,7 @@ async function runQuicktype(
             );
             break;
         default:
-            vscode.window.showErrorMessage(`Unrecognized input format: ${kind}`);
-            return;
+            throw new Error(`Unrecognized input format: ${kind}`);
     }
 
     const configuration = vscode.workspace.getConfiguration("quicktype");
@@ -158,6 +162,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
         content = await readClipboard();
     } catch (e) {
         vscode.window.showErrorMessage("Could not get clipboard contents");
+        return;
     }
 
     if (kind !== "typescript" && !jsonIsValid(content)) {
@@ -292,8 +297,26 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 }
 
 function deduceTargetLanguage(): TargetLanguage {
-    return languageNamed("typescript");
+    const documents = vscode.workspace.textDocuments;
+    const counts = new Map<string, number>();
+    for (const doc of documents) {
+        const name = doc.languageId;
+        let count = counts.get(name);
+        if (count === undefined) {
+            count = 0;
+        }
+        count += 1;
+        counts.set(name, count);
+    }
+    const sorted = Array.from(counts).sort(([_na, ca], [_nb, cb]) => cb - ca);
+    for (const [name] of sorted) {
+        const lang = languageNamed(name);
+        if (lang !== undefined) return lang;
+    }
+    return languageNamed("typescript")!;
 }
+
+const lastTargetLanguageUsedKey = "lastTargetLanguageUsed";
 
 let extensionContext: vscode.ExtensionContext | undefined = undefined;
 
@@ -316,7 +339,7 @@ async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.Te
         codeProvider.setDocument(document);
     }
 
-    let originalEditor: vscode.TextEditor;
+    let originalEditor: vscode.TextEditor | undefined;
     if (lastCodeProvider !== undefined) {
         const doc = lastCodeProvider.document;
         originalEditor = vscode.window.visibleTextEditors.find(e => e.document === doc);
@@ -325,11 +348,18 @@ async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.Te
         originalEditor = vscode.window.activeTextEditor;
     }
 
+    let column: number;
+    if (originalEditor !== undefined && originalEditor.viewColumn !== undefined) {
+        column = originalEditor.viewColumn + 1;
+    } else {
+        column = 0;
+    }
+
     lastCodeProvider = codeProvider;
 
     codeProvider.update();
     const doc = await vscode.workspace.openTextDocument(codeProvider.uri);
-    vscode.window.showTextDocument(doc, originalEditor.viewColumn + 1, true);
+    vscode.window.showTextDocument(doc, column, true);
 }
 
 async function openForJSON(editor: vscode.TextEditor, _languageName: string): Promise<void> {
@@ -350,9 +380,11 @@ async function changeTargetLanguage(): Promise<void> {
     if (lastCodeProvider === undefined) return;
 
     await openQuicktype(explicitlySetTargetLanguage, lastCodeProvider.document);
+
+    await persist.setItem(lastTargetLanguageUsedKey, explicitlySetTargetLanguage.name);
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
     extensionContext = context;
 
     analytics.initialize(context);
@@ -378,6 +410,13 @@ export function activate(context: vscode.ExtensionContext) {
         ),
         vscode.commands.registerCommand(Command.ChangeTargetLanguage, changeTargetLanguage)
     );
+
+    await persist.init({ dir: path.join(homedir(), ".quicktype-vscode") });
+
+    const maybeName = await persist.getItem(lastTargetLanguageUsedKey);
+    if (typeof maybeName === "string") {
+        explicitlySetTargetLanguage = languageNamed(maybeName);
+    }
 }
 
 export function deactivate(): void {
