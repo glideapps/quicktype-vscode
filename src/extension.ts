@@ -29,6 +29,8 @@ enum Command {
     PasteSchemaAsTypesAndSerialization = "quicktype.pasteJSONSchemaAsTypesAndSerialization",
     PasteTypeScriptAsTypesAndSerialization = "quicktype.pasteTypeScriptAsTypesAndSerialization",
     OpenQuicktypeForJSON = "quicktype.openForJSON",
+    OpenQuicktypeForJSONSchema = "quicktype.openForJSONSchema",
+    OpenQuicktypeForTypeScript = "quicktype.openForTypeScript",
     ChangeTargetLanguage = "quicktype.changeTargetLanguage"
 }
 
@@ -219,7 +221,11 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 
     private _targetCode = "";
 
-    constructor(private readonly _targetLanguage: TargetLanguage, private _document: vscode.TextDocument) {
+    constructor(
+        private _inputKind: InputKind,
+        private readonly _targetLanguage: TargetLanguage,
+        private _document: vscode.TextDocument
+    ) {
         this.scheme = `quicktype-${this._targetLanguage.name}`;
         this.uri = vscode.Uri.parse(`${this.scheme}:QuickType.${this._targetLanguage.extension}`);
 
@@ -233,6 +239,14 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         this._onDidChange.dispose();
         this._changeSubscription.dispose();
         this._onDidChangeVisibleTextEditors.dispose();
+    }
+
+    get inputKind(): InputKind {
+        return this._inputKind;
+    }
+
+    setInputKind(inputKind: InputKind): void {
+        this._inputKind = inputKind;
     }
 
     get document(): vscode.TextDocument {
@@ -274,7 +288,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         try {
             const result = await runQuicktype(
                 this._documentText,
-                "json",
+                this._inputKind,
                 this._targetLanguage,
                 "TopLevel",
                 true,
@@ -325,10 +339,14 @@ const codeProviders: Map<string, CodeProvider> = new Map();
 let lastCodeProvider: CodeProvider | undefined = undefined;
 let explicitlySetTargetLanguage: TargetLanguage | undefined = undefined;
 
-async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.TextDocument): Promise<void> {
+async function openQuicktype(
+    inputKind: InputKind,
+    targetLanguage: TargetLanguage,
+    document: vscode.TextDocument
+): Promise<void> {
     let codeProvider = codeProviders.get(targetLanguage.name);
     if (codeProvider === undefined) {
-        codeProvider = new CodeProvider(targetLanguage, document);
+        codeProvider = new CodeProvider(inputKind, targetLanguage, document);
         codeProviders.set(targetLanguage.name, codeProvider);
         if (extensionContext !== undefined) {
             extensionContext.subscriptions.push(
@@ -336,6 +354,7 @@ async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.Te
             );
         }
     } else {
+        codeProvider.setInputKind(inputKind);
         codeProvider.setDocument(document);
     }
 
@@ -362,12 +381,12 @@ async function openQuicktype(targetLanguage: TargetLanguage, document: vscode.Te
     vscode.window.showTextDocument(doc, column, true);
 }
 
-async function openForJSON(editor: vscode.TextEditor, _languageName: string): Promise<void> {
+async function openForEditor(editor: vscode.TextEditor, inputKind: InputKind): Promise<void> {
     // FIXME: analytics
 
     const targetLanguage =
         explicitlySetTargetLanguage !== undefined ? explicitlySetTargetLanguage : deduceTargetLanguage();
-    await openQuicktype(targetLanguage, editor.document);
+    await openQuicktype(inputKind, targetLanguage, editor.document);
 }
 
 async function changeTargetLanguage(): Promise<void> {
@@ -379,7 +398,7 @@ async function changeTargetLanguage(): Promise<void> {
     explicitlySetTargetLanguage = pick.lang;
     if (lastCodeProvider === undefined) return;
 
-    await openQuicktype(explicitlySetTargetLanguage, lastCodeProvider.document);
+    await openQuicktype(lastCodeProvider.inputKind, explicitlySetTargetLanguage, lastCodeProvider.document);
 
     await persist.setItem(lastTargetLanguageUsedKey, explicitlySetTargetLanguage.name);
 }
@@ -406,7 +425,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             pasteAsTypes(editor, "typescript", false)
         ),
         vscode.commands.registerTextEditorCommand(Command.OpenQuicktypeForJSON, editor =>
-            openForJSON(editor, "csharp")
+            openForEditor(editor, "json")
+        ),
+        vscode.commands.registerTextEditorCommand(Command.OpenQuicktypeForJSONSchema, editor =>
+            openForEditor(editor, "schema")
+        ),
+        vscode.commands.registerTextEditorCommand(Command.OpenQuicktypeForTypeScript, editor =>
+            openForEditor(editor, "typescript")
         ),
         vscode.commands.registerCommand(Command.ChangeTargetLanguage, changeTargetLanguage)
     );

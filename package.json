@@ -38,7 +38,9 @@
         "onCommand:quicktype.pasteJSONSchemaAsTypes",
         "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization",
         "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization",
-        "onCommand:quicktype.openForJSON"
+        "onCommand:quicktype.openForJSON",
+        "onCommand:quicktype.openForJSONSchema",
+        "onCommand:quicktype.openForTypeScript"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -92,6 +94,14 @@
             {
                 "command": "quicktype.openForJSON",
                 "title": "Open quicktype for JSON"
+            },
+            {
+                "command": "quicktype.openForJSONSchema",
+                "title": "Open quicktype for JSON Schema"
+            },
+            {
+                "command": "quicktype.openForTypeScript",
+                "title": "Open quicktype for TypeScript"
             },
             {
                 "command": "quicktype.changeTargetLanguage",
