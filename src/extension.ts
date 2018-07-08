@@ -231,6 +231,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
         private _document: vscode.TextDocument
     ) {
         this.scheme = `quicktype-${this._targetLanguage.name}`;
+        // TODO use this.documentName instead of QuickType in uri
         this.uri = vscode.Uri.parse(`${this.scheme}:QuickType.${this._targetLanguage.extension}`);
 
         this._changeSubscription = vscode.workspace.onDidChangeTextDocument(ev => this.textDidChange(ev));
@@ -259,6 +260,12 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 
     get document(): vscode.TextDocument {
         return this._document;
+    }
+
+    get documentName(): string {
+        const basename = path.basename(this.document.fileName);
+        const extIndex = basename.lastIndexOf(".");
+        return extIndex === -1 ? basename : basename.substring(0, extIndex);
     }
 
     setDocument(document: vscode.TextDocument): void {
@@ -299,12 +306,13 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 
     async update(): Promise<void> {
         this._documentText = this._document.getText();
+
         try {
             const result = await runQuicktype(
                 this._documentText,
                 this._inputKind,
                 this._targetLanguage,
-                path.basename(this._document.fileName, ".json"),
+                this.documentName,
                 false,
                 undefined,
                 ["", "To change quicktype's target language, run command:", "", '  "Set quicktype target language"']
