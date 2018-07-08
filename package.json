@@ -110,7 +110,7 @@
             },
             {
                 "command": "quicktype.changeTargetLanguage",
-                "title": "Change quicktype's target language"
+                "title": "Set quicktype target language"
             }
         ],
         "keybindings": [
