@@ -304,7 +304,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
                 this._documentText,
                 this._inputKind,
                 this._targetLanguage,
-                "TopLevel",
+                path.basename(this._document.fileName, ".json"),
                 false,
                 undefined,
                 ["", 'To change the language, run the command "Change quicktype\'s target language"']
