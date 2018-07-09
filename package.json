@@ -37,7 +37,10 @@
         "onCommand:quicktype.pasteJSONAsTypesAndSerialization",
         "onCommand:quicktype.pasteJSONSchemaAsTypes",
         "onCommand:quicktype.pasteJSONSchemaAsTypesAndSerialization",
-        "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization"
+        "onCommand:quicktype.pasteTypeScriptAsTypesAndSerialization",
+        "onCommand:quicktype.openForJSON",
+        "onCommand:quicktype.openForJSONSchema",
+        "onCommand:quicktype.openForTypeScript"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -45,6 +48,11 @@
             "type": "object",
             "title": "quicktype",
             "properties": {
+                "quicktype.justTypes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Produce just types, or (de-)serialization code as well?"
+                },
                 "quicktype.inferMaps": {
                     "type": "boolean",
                     "default": true,
@@ -87,6 +95,22 @@
             {
                 "command": "quicktype.pasteTypeScriptAsTypesAndSerialization",
                 "title": "Paste TypeScript as Code"
+            },
+            {
+                "command": "quicktype.openForJSON",
+                "title": "Open quicktype for JSON"
+            },
+            {
+                "command": "quicktype.openForJSONSchema",
+                "title": "Open quicktype for JSON Schema"
+            },
+            {
+                "command": "quicktype.openForTypeScript",
+                "title": "Open quicktype for TypeScript"
+            },
+            {
+                "command": "quicktype.changeTargetLanguage",
+                "title": "Set quicktype target language"
             }
         ],
         "keybindings": [
@@ -114,18 +138,20 @@
     },
     "devDependencies": {
         "@types/clipboardy": "^1.1.0",
-        "@types/node": "^8.10.20",
+        "@types/node": "^8.10.21",
+        "@types/node-persist": "0.0.33",
         "@types/universal-analytics": "^0.4.2",
         "@types/uuid": "^3.4.3",
         "typescript": "^2.9.2",
-        "vsce": "^1.42.0",
+        "vsce": "^1.43.0",
         "vscode": "^1.1.18"
     },
     "dependencies": {
         "clipboardy": "^1.2.3",
-        "quicktype-core": "^4.0.5",
+        "node-persist": "^3.0.1",
+        "quicktype-core": "^4.0.26",
         "quicktype-typescript-input": "^0.0.7",
         "universal-analytics": "^0.4.17",
-        "uuid": "^3.2.1"
+        "uuid": "^3.3.2"
     }
 }

@@ -2,57 +2,33 @@
 
 **Supports** `TypeScript`, `Python`, `Go`, `Ruby`, `C#`, `Java`, `Swift`, `Rust`, `Kotlin`, `C++`, `Flow`, `Objective-C`, `JavaScript`, `Elm`, and `JSON Schema`.
 
+-   Interactively generate types and (de-)serialization code from JSON, JSON Schema, and TypeScript
+-   Paste JSON/JSON Schema/TypeScript as code
+
+![](https://raw.githubusercontent.com/quicktype/quicktype-vscode/master/media/demo-interactive.gif)
+
 `quicktype` infers types from sample JSON data, then outputs strongly typed models and serializers for working with that data in your desired programming language. For more explanation, read [A first look at quicktype](http://blog.quicktype.io/first-look/).
+
+In any JSON file, use the command "Open quicktype for JSON" to summon quicktype, which will generate types from the JSON. Invoke "Change quicktype's target language" to pick a different language. There are similar "Open quicktype" commands for JSON Schema and TypeScript.
+
+Another way to use quicktype is to copy JSON into the clipboard and invoke "Paste JSON as code/types":
 
 ![](https://raw.githubusercontent.com/quicktype/quicktype-vscode/master/media/demo.gif)
 
-For a more powerful experience, including custom options and the ability to generate code from JSON Schema or multiple JSON samples, try [quicktype.io](https://app.quicktype.io).
+For a more powerful experience, including custom options and the ability to generate code from multiple JSON samples, try [quicktype.io](https://app.quicktype.io).
 
 ## Installing
 
 This extension is available for free in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items/quicktype.quicktype)
 
-## Example
+## Customization
 
-Let's generate some Go code to parse this Pokémon JSON:
+-   `quicktype.justTypes`: Generate only types, or also produce (de)serialization code when using "Open quicktype". When using "Paste", you can pick between the commands for "types" and "code", without having to set this option.
 
-```json
-{
-    "id": 1,
-    "name": "Bulbasaur",
-    "img": "http://www.serebii.net/pokemongo/pokemon/001.png",
-    "type": ["Grass", "Poison"],
-    "weaknesses": ["Fire", "Ice", "Flying", "Psychic"]
-}
-```
+-   `quicktype.inferMaps`, `quicktype.inferEnums`, `quicktype.inferDates`, `quicktype.inferIntegerStrings`: Tell quicktype whether it should try to infer those types from the input JSON. This is not a precise science, so sometimes the guess will be wrong, which is why you can turn them off through these options. Also, quicktype doesn't support dates and stringified integers in all target languages yes.
 
-1.  Copy this sample JSON.
-1.  Create a new `.go` file.
-1.  Invoke the `Paste JSON as Code` command (or `Paste JSON as Types` if you only want types).
-1.  Type a name for this type–`Pokemon` will do.
+## Contribute!
 
-`quicktype` will generate the following code:
+quicktype is an open source project, and we're always happy about contributors. If you can think of a way to improve [this extension](https://github.com/quicktype/quicktype-vscode), or [quicktype](https://github.com/quicktype/quicktype), please consider contributing, especially if you know TypeScript. Code is only one way to contribute, though: we're particularly short on documentation. We'd also love to hear your feedback - come [talk to us on Slack](http://slack.quicktype.io)!
 
-```go
-package main
-
-import "encoding/json"
-
-func UnmarshalPokemon(data []byte) (Pokemon, error) {
-	var r Pokemon
-	err := json.Unmarshal(data, &r)
-	return r, err
-}
-
-func (r *Pokemon) Marshal() ([]byte, error) {
-	return json.Marshal(r)
-}
-
-type Pokemon struct {
-	ID         int64    `json:"id"`
-	Name       string   `json:"name"`
-	Img        string   `json:"img"`
-	Type       []string `json:"type"`
-	Weaknesses []string `json:"weaknesses"`
-}
-```
+If you find a bug, please [report it on GitHub](https://github.com/quicktype/quicktype-vscode/issues).
