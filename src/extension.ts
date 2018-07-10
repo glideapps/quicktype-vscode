@@ -367,6 +367,7 @@ async function openQuicktype(
     document: vscode.TextDocument
 ): Promise<void> {
     let codeProvider = codeProviders.get(targetLanguage.name);
+    const openNew = codeProvider === undefined;
     if (codeProvider === undefined) {
         codeProvider = new CodeProvider(inputKind, targetLanguage, document);
         codeProviders.set(targetLanguage.name, codeProvider);
@@ -401,19 +402,17 @@ async function openQuicktype(
     codeProvider.update();
     const doc = await vscode.workspace.openTextDocument(codeProvider.uri);
     vscode.window.showTextDocument(doc, column, true);
+
+    analytics.sendEvent(`open${openNew ? " new" : ""} ${inputKind}`, targetLanguage.name);
 }
 
 async function openForEditor(editor: vscode.TextEditor, inputKind: InputKind): Promise<void> {
-    // FIXME: analytics
-
     const targetLanguage =
         explicitlySetTargetLanguage !== undefined ? explicitlySetTargetLanguage : deduceTargetLanguage();
     await openQuicktype(inputKind, targetLanguage, editor.document);
 }
 
 async function changeTargetLanguage(): Promise<void> {
-    // FIXME: analytics
-
     const pick = await pickTargetLanguage();
     if (pick.cancelled) return;
 
