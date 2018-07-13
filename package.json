@@ -63,15 +63,25 @@
                     "default": true,
                     "description": "Infer enums when there aren't many different string values."
                 },
-                "quicktype.inferDates": {
+                "quicktype.inferDateTimes": {
                     "type": "boolean",
                     "default": true,
                     "description": "Use date-time types for strings that look like date-times."
+                },
+                "quicktype.inferUuids": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use UUID types for strings that look like UUIDs."
                 },
                 "quicktype.inferIntegerStrings": {
                     "type": "boolean",
                     "default": true,
                     "description": "Convert stringified integers into integers, and back."
+                },
+                "quicktype.inferBooleanStrings": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Convert stringified booleans into booleans, and back."
                 }
             }
         },
@@ -149,8 +159,8 @@
     "dependencies": {
         "clipboardy": "^1.2.3",
         "node-persist": "^3.0.1",
-        "quicktype-core": "^4.0.26",
-        "quicktype-typescript-input": "^0.0.7",
+        "quicktype-core": "^5.0.0",
+        "quicktype-typescript-input": "^0.0.8",
         "universal-analytics": "^0.4.17",
         "uuid": "^3.3.2"
     }
