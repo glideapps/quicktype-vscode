@@ -152,15 +152,15 @@
         "@types/node-persist": "0.0.33",
         "@types/universal-analytics": "^0.4.2",
         "@types/uuid": "^3.4.3",
-        "typescript": "^2.9.2",
+        "typescript": "^3.0.3",
         "vsce": "^1.43.0",
         "vscode": "^1.1.18"
     },
     "dependencies": {
         "clipboardy": "^1.2.3",
         "node-persist": "^3.0.1",
-        "quicktype-core": "^5.0.0",
-        "quicktype-typescript-input": "^0.0.8",
+        "quicktype-core": "^5.0.42",
+        "quicktype-typescript-input": "^0.0.9",
         "universal-analytics": "^0.4.17",
         "uuid": "^3.3.2"
     }
