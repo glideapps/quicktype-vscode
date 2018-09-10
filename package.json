@@ -163,6 +163,7 @@
         "quicktype-core": "^5.0.42",
         "quicktype-typescript-input": "^0.0.9",
         "universal-analytics": "^0.4.17",
-        "uuid": "^3.3.2"
+        "uuid": "^3.3.2",
+        "unicode-properties": "github:quicktype/unicode-properties#dist"
     }
 }
