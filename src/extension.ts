@@ -21,8 +21,6 @@ import {
 import { schemaForTypeScriptSources } from "quicktype-typescript-input";
 import * as persist from "node-persist";
 
-import * as analytics from "./analytics";
-
 const configurationSection = "quicktype";
 
 enum Command {
@@ -194,8 +192,6 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
         }
         topLevelName = tln.name;
     }
-
-    analytics.sendEvent(`paste ${kind}`, language.lang.name);
 
     let result: SerializedRenderResult;
     try {
@@ -375,7 +371,6 @@ async function openQuicktype(
     document: vscode.TextDocument
 ): Promise<void> {
     let codeProvider = codeProviders.get(targetLanguage.name);
-    const openNew = codeProvider === undefined;
     if (codeProvider === undefined) {
         codeProvider = new CodeProvider(inputKind, targetLanguage, document);
         codeProviders.set(targetLanguage.name, codeProvider);
@@ -410,8 +405,6 @@ async function openQuicktype(
     codeProvider.update();
     const doc = await vscode.workspace.openTextDocument(codeProvider.uri);
     vscode.window.showTextDocument(doc, column, true);
-
-    analytics.sendEvent(`open${openNew ? " new" : ""} ${inputKind}`, targetLanguage.name);
 }
 
 async function openForEditor(editor: vscode.TextEditor, inputKind: InputKind): Promise<void> {
@@ -434,8 +427,6 @@ async function changeTargetLanguage(): Promise<void> {
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     extensionContext = context;
-
-    analytics.initialize(context);
 
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand(Command.PasteJSONAsTypes, editor =>
