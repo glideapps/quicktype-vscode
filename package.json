@@ -128,7 +128,7 @@
                 "command": "quicktype.pasteJSONAsTypesAndSerialization",
                 "key": "ctrl+shift+V",
                 "mac": "cmd+shift+V",
-                "when": "editorTextFocus"
+                "when": "editorTextFocus && editorLangId != 'markdown'"
             },
             {
                 "command": "quicktype.pasteJSONAsTypes",
