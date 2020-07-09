@@ -5,7 +5,6 @@ import * as path from "path";
 
 import * as vscode from "vscode";
 import { Range } from "vscode";
-import { read as readClipboard } from "clipboardy";
 import {
     quicktype,
     languageNamed,
@@ -174,7 +173,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
 
     let content: string;
     try {
-        content = await readClipboard();
+        content = await vscode.env.clipboard.readText();
     } catch (e) {
         vscode.window.showErrorMessage("Could not get clipboard contents");
         return;
