@@ -51,7 +51,7 @@
                 "quicktype.justTypes": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Produce just types, or (de-)serialization code as well?"
+                    "description": "Produce only types; no (de-)serialization code"
                 },
                 "quicktype.inferMaps": {
                     "type": "boolean",
