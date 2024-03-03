@@ -125,9 +125,7 @@ async function runQuicktype(
         case "typescript":
             await inputData.addSource(
                 "schema",
-                schemaForTypeScriptSources({
-                    [`${topLevelName}.ts`]: content
-                }),
+                schemaForTypeScriptSources([`${topLevelName}.ts`]),
                 () => new JSONSchemaInput(undefined)
             );
             break;
@@ -196,7 +194,7 @@ async function pasteAsTypes(editor: vscode.TextEditor, kind: InputKind, justType
     let result: SerializedRenderResult;
     try {
         result = await runQuicktype(content, kind, language.lang, topLevelName, justTypes, indentation, []);
-    } catch (e) {
+    } catch (e: any) {
         // TODO Invalid JSON produces an uncatchable exception from quicktype
         // Fix this so we can catch and show an error message.
         vscode.window.showErrorMessage(e);
@@ -227,7 +225,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
     private readonly _onDidChangeConfiguration: vscode.Disposable;
 
     private _isOpen = false;
-    private _timer: NodeJS.Timer | undefined = undefined;
+    private _timer: NodeJS.Timeout | undefined = undefined;
 
     constructor(
         private _inputKind: InputKind,
@@ -240,7 +238,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
 
         this._changeSubscription = vscode.workspace.onDidChangeTextDocument(ev => this.textDidChange(ev));
         this._onDidChangeVisibleTextEditors = vscode.window.onDidChangeVisibleTextEditors(editors =>
-            this.visibleTextEditorsDidChange(editors)
+            this.visibleTextEditorsDidChange([...editors])
         );
         this._onDidChangeConfiguration = vscode.workspace.onDidChangeConfiguration(ev =>
             this.configurationDidChange(ev)
@@ -326,7 +324,7 @@ class CodeProvider implements vscode.TextDocumentContentProvider {
             if (!this._isOpen) return;
 
             this._onDidChange.fire(this.uri);
-        } catch (e) {}
+        } catch (e) { }
     }
 
     provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
