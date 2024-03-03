@@ -2,7 +2,7 @@
     "name": "quicktype",
     "displayName": "Paste JSON as Code",
     "description": "Copy JSON, paste as Go, TypeScript, C#, C++ and more.",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "publisher": "quicktype",
     "icon": "media/icon.png",
     "galleryBanner": {
@@ -15,14 +15,14 @@
         "email": "hello@quicktype.io"
     },
     "bugs": {
-        "url": "https://github.com/quicktype/quicktype/issues"
+        "url": "https://github.com/quicktype-vscode/issues"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/quicktype/quicktype"
+        "url": "https://github.com/glideapps/quicktype-vscode"
     },
     "engines": {
-        "vscode": "^1.31.0"
+        "vscode": "^1.87.0"
     },
     "categories": [
         "Other"
@@ -140,24 +140,30 @@
     },
     "scripts": {
         "publish": "vsce publish -p $VSCE_TOKEN",
+        "package": "vsce package",
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "@types/node": "^8.10.29",
-        "@types/node-persist": "0.0.33",
-        "@types/urijs": "github:quicktype/types-urijs",
-        "typescript": "^3.0.3",
-        "vsce": "^1.71.0",
-        "vscode": "^1.1.36"
+        "@types/mocha": "^10.0.6",
+        "@types/node": "18.x",
+        "@types/node-persist": "^3.1.8",
+        "@types/readable-stream": "^4.0.10",
+        "@types/vscode": "^1.87.0",
+        "@typescript-eslint/eslint-plugin": "^7.0.2",
+        "@typescript-eslint/parser": "^7.0.2",
+        "@vscode/test-cli": "^0.0.6",
+        "@vscode/test-electron": "^2.3.9",
+        "eslint": "^8.56.0",
+        "typescript": "^5.3.3",
+        "vsce": "^1.97.0"
     },
     "dependencies": {
-        "node-persist": "^3.0.1",
-        "quicktype-core": "^6.0.52",
-        "quicktype-typescript-input": "^0.0.11",
+        "node-persist": "^4.0.1",
+        "quicktype-core": "^23.0.105",
+        "quicktype-typescript-input": "^23.0.105",
         "unicode-properties": "github:quicktype/unicode-properties#dist"
     }
 }
