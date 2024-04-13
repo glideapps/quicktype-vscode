@@ -1,5 +1,3 @@
-[![Marketplace](https://vsmarketplacebadge.apphb.com/version/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype) [![Installs](https://vsmarketplacebadge.apphb.com/installs/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype) [![Ratings](https://vsmarketplacebadge.apphb.com/rating-short/quicktype.quicktype.svg)](https://marketplace.visualstudio.com/items/quicktype.quicktype)
-
 **Supports** `C (cJSON)`, `C#`, `C++`, `Crystal`, `Dart`, `Elm`, `Flow`, `Go`, `Haskell`, `JSON Schema`, `Java`, `JavaScript`, `JavaScript PropTypes`, `Kotlin`, `Objective-C`, `PHP`, `Pike`, `Python`, `Ruby`, `Rust`, `Scala3`, `Smithy`, `Swift`, `TypeScript`, `TypeScript Effect Schema` and `TypeScript Zod`
 
 -   Interactively generate types and (de-)serialization code from JSON, JSON Schema, and TypeScript
